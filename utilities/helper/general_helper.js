@@ -59,6 +59,19 @@ var helpers = {
         qb.release();
         return response;
     },
+    get_and_conditional_string: async (obj) => {
+        var output_string = "";
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                output_string += "and " + key + " = '" + obj[key] + "' ";
+            }
+        }
+
+        let words = output_string.split(" ");
+        let output_string1 = words.slice(1).join(" ");
+
+        return output_string1;
+    },
     common_get_count: async (condition, table) => {
         let qb = await pool.get_connection();
         let final_cond = " where ";
