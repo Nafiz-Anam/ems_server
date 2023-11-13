@@ -19,13 +19,6 @@ var dbModel = {
         qb.release();
         return response;
     },
-    select_specific: async (condition, table) => {
-        const dbtable = config.table_prefix + table;
-        let qb = await pool.get_connection();
-        let response = await qb.select("*").where(condition).get(dbtable);
-        qb.release();
-        return response;
-    },
     select_list: async (condition, limit) => {
         let qb = await pool.get_connection();
         let response;
@@ -47,13 +40,6 @@ var dbModel = {
         }
         console.log("query => ", qb.last_query());
         qb.release();
-        return response;
-    },
-    updateDetails: async (condition, data) => {
-        let qb = await pool.get_connection();
-        let response = await qb.set(data).where(condition).update(dbtable);
-        qb.release();
-        console.log(qb.last_query());
         return response;
     },
     delete: async (condition) => {

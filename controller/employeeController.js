@@ -102,8 +102,19 @@ var EmployeeController = {
                 search.phone = req.bodyString("phone");
             }
 
-            const totalCount = await EmployeeModel.get_count(condition);
-            EmployeeModel.select_list(condition, limit)
+            const totalCount = await EmployeeModel.get_count(
+                condition,
+                {},
+                search,
+                "employees"
+            );
+            await EmployeeModel.select_list(
+                condition,
+                {},
+                limit,
+                search,
+                "employees"
+            )
                 .then(async (result) => {
                     let response = [];
                     for (let val of result) {
@@ -432,8 +443,19 @@ var EmployeeController = {
                 search.bank_swift_code = req.bodyString("bank_swift_code");
             }
 
-            const totalCount = await EmployeeModel.get_count(condition);
-            EmployeeModel.select_list(condition, limit)
+            const totalCount = await EmployeeModel.get_count(
+                condition,
+                {},
+                search,
+                "employee_accounts"
+            );
+            await EmployeeModel.select_list(
+                condition,
+                {},
+                limit,
+                search,
+                "employee_accounts"
+            )
                 .then(async (result) => {
                     let response = [];
 

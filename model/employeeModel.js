@@ -27,33 +27,8 @@ var dbModel = {
         qb.release();
         return response;
     },
-    select_list: async (condition, limit) => {
-        console.log(condition);
-        console.log(limit);
-        let qb = await pool.get_connection();
-        let response;
-        if (Object.keys(condition).length) {
-            response = await qb
-                .select("*")
-                .where(condition)
-                .order_by("id", "desc")
-                .limit(limit.perpage)
-                .offset(limit.start)
-                .get(dbtable);
-        } else {
-            response = await qb
-                .select("*")
-                .order_by("id", "desc")
-                .limit(limit.perpage)
-                .offset(limit.start)
-                .get(dbtable);
-        }
-
-        console.log("query => ", qb.last_query());
-        qb.release();
-        return response;
-    },
-    select_list2: async (condition, date_condition, limit) => {
+    select_list: async (condition, date_condition, limit, search, table) => {
+        const dbtable = config.table_prefix + table;
         let qb = await pool.get_connection();
         let final_cond = " where ";
 
@@ -81,6 +56,16 @@ var dbModel = {
             }
         }
 
+        if (Object.keys(search).length) {
+            let date_like_search_str =
+                await helpers.get_conditional_or_like_string(search);
+            if (final_cond == " where ") {
+                final_cond = final_cond + date_like_search_str;
+            } else {
+                final_cond = final_cond + " and " + date_like_search_str;
+            }
+        }
+
         if (final_cond == " where ") {
             final_cond = "";
         }
@@ -105,9 +90,12 @@ var dbModel = {
         qb.release();
         return response;
     },
-    get_count: async (condition) => {
+    get_count: async (condition, date_condition, search, table) => {
+        const dbtable = config.table_prefix + table;
+
         let qb = await pool.get_connection();
         let final_cond = " where ";
+
         if (Object.keys(condition).length) {
             let condition_str = await helpers.get_and_conditional_string(
                 condition
@@ -118,10 +106,36 @@ var dbModel = {
                 final_cond = final_cond + " and " + condition_str;
             }
         }
+
+        if (Object.keys(date_condition).length) {
+            let date_condition_str = await helpers.get_date_between_condition(
+                date_condition.from_date,
+                date_condition.to_date,
+                "created_at"
+            );
+            if (final_cond == " where ") {
+                final_cond = final_cond + date_condition_str;
+            } else {
+                final_cond = final_cond + " and " + date_condition_str;
+            }
+        }
+
+        if (Object.keys(search).length) {
+            let date_like_search_str =
+                await helpers.get_conditional_or_like_string(search);
+            if (final_cond == " where ") {
+                final_cond = final_cond + date_like_search_str;
+            } else {
+                final_cond = final_cond + " and " + date_like_search_str;
+            }
+        }
+
         if (final_cond == " where ") {
             final_cond = "";
         }
+
         let query = "select count(*) as total from " + dbtable + final_cond;
+
         console.log("query => ", query);
         let response = await qb.query(query);
         qb.release();
@@ -144,13 +158,6 @@ var dbModel = {
     update_account: async (condition, data) => {
         let qb = await pool.get_connection();
         let response = await qb.set(data).where(condition).update(dbtable2);
-        qb.release();
-        console.log(qb.last_query());
-        return response;
-    },
-    delete: async (condition) => {
-        let qb = await pool.get_connection();
-        let response = await qb.where(condition).delete(dbtable2);
         qb.release();
         console.log(qb.last_query());
         return response;

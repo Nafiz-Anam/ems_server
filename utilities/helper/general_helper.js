@@ -24,6 +24,18 @@ var helpers = {
         console.log("randomPass", randomPass);
         return randomPass;
     },
+    get_conditional_or_like_string: async (obj) => {
+        var output_string = "";
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                output_string += "or " + key + " LIKE '%" + obj[key] + "%' ";
+            }
+        }
+
+        let words = output_string.split(" ");
+        let output_string1 = words.slice(1).join(" ");
+        return output_string1;
+    },
     get_data_list: async (selection, dbtable, condition) => {
         let qb = await pool.get_connection();
         let response = await qb
