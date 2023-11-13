@@ -6,6 +6,145 @@ const helpers = require("../utilities/helper/general_helper");
 const email_service = require("../utilities/mail/emailService");
 
 var AdminController = {
+    send_otp: async (req, res) => {
+        const { email } = req.body;
+        try {
+            let otp = await helpers.generateOtp(6);
+            const title = "Employee Management System";
+            const message =
+                "Welcome to " +
+                title +
+                "! Your verification code is: " +
+                otp +
+                ". Do not share it with anyone.";
+
+            await email_service(email, message, "Signup OTP code")
+                .then(async (data) => {
+                    const uuid = new SequenceUUID({
+                        valid: true,
+                        dashes: true,
+                        unsafeBuffer: true,
+                    });
+                    let token = uuid.generate();
+                    let ins_data = {
+                        email,
+                        otp: otp,
+                        token: token,
+                    };
+                    await AdminModel.add_otp(ins_data)
+                        .then(async (result) => {
+                            res.status(200).json({
+                                status: true,
+                                token: token,
+                                message: "Otp sent on your email.",
+                            });
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            res.status(500).json({
+                                status: false,
+                                message: error.message,
+                            });
+                        });
+                })
+                .catch((error) => {
+                    console.log(error);
+                    res.status(500).json({
+                        status: false,
+                        message: error.message,
+                    });
+                });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                status: false,
+                message: error.message,
+            });
+        }
+    },
+
+    otp_verify: async (req, res) => {
+        try {
+            const condition = {
+                otp: req.bodyString("otp"),
+                token: req.bodyString("token"),
+            };
+
+            const result = await AdminModel.select_otp(condition);
+
+            if (!result) {
+                return res.status(401).json({
+                    status: false,
+                    message: "Wrong OTP, Try again!",
+                });
+            }
+
+            let userData = {
+                email: result[0]?.email,
+                type: "admin",
+            };
+
+            const insertionResult = await AdminModel.add(userData);
+
+            if (insertionResult.insert_id) {
+                const payload = {
+                    id: insertionResult?.insert_id,
+                    type: "admin",
+                };
+                const token = accessToken(payload);
+
+                await helpers.delete_common_entry({ condition }, "otps");
+
+                return res.status(200).json({
+                    status: true,
+                    token,
+                    message: "OTP verified. Admin created successfully!",
+                });
+            } else {
+                return res.status(500).json({
+                    status: false,
+                    message: "Error creating admin.",
+                });
+            }
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                status: false,
+                message: "Internal server error!",
+            });
+        }
+    },
+
+    add_password: async (req, res) => {
+        try {
+            const { password } = req.body;
+            const hashPassword = enc_dec.encrypt(password);
+
+            const user_data = {
+                name: req.bodyString("name"),
+                password: hashPassword,
+            };
+            const condition = { id: req.user?.id };
+
+            await AdminModel.updateDetails(condition, user_data);
+
+            const payload = { id: req.user?.id, type: req.user?.type };
+            const token = accessToken(payload);
+
+            return res.status(200).json({
+                status: true,
+                token,
+                message: "Admin data added successfully!",
+            });
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({
+                status: false,
+                message: "Server side error!",
+            });
+        }
+    },
+
     login: async (req, res) => {
         try {
             let foundUser = await AdminModel.select({
@@ -62,28 +201,30 @@ var AdminController = {
             const message = `Your verification code is: ${otp}. Do not share it with anyone.`;
 
             if (foundUser.length > 0) {
-                await email_service(req.bodyString("email"), message).then(
-                    async (result) => {
-                        // adding otp entry
-                        let otp_payload = {
-                            otp: otp,
-                            user_id: foundUser[0].id,
-                        };
-                        await AdminModel.add_otp(otp_payload);
+                await email_service(
+                    req.bodyString("email"),
+                    message,
+                    "Forgot password OTP"
+                ).then(async (result) => {
+                    // adding otp entry
+                    let otp_payload = {
+                        otp: otp,
+                        user_id: foundUser[0].id,
+                    };
+                    await AdminModel.add_otp(otp_payload);
 
-                        let payload = {
-                            id: foundUser[0].id,
-                            type: foundUser[0].type,
-                        };
-                        const token = accessToken(payload);
+                    let payload = {
+                        id: foundUser[0].id,
+                        type: foundUser[0].type,
+                    };
+                    const token = accessToken(payload);
 
-                        res.status(200).json({
-                            status: true,
-                            token: token,
-                            message: "Verification OTP sent successfully!",
-                        });
-                    }
-                );
+                    res.status(200).json({
+                        status: true,
+                        token: token,
+                        message: "Verification OTP sent successfully!",
+                    });
+                });
             } else {
                 res.status(404).json({
                     status: false,

@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-const email_service = async (toEmail, emailBody) => {
+const email_service = async (toEmail, emailBody, subject) => {
     let transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: process.env.SMTP_PORT,
@@ -14,7 +14,7 @@ const email_service = async (toEmail, emailBody) => {
     let message = {
         from: process.env.SMTP_EMAIL, // sender address
         to: toEmail, // list of receivers
-        subject: "Forgot password OTP", // Subject line
+        subject: subject, // Subject line
         text: emailBody, // plain text body
         // html: invoiceTemplate(emailData), // html body
     };
