@@ -2,27 +2,23 @@ require("dotenv").config();
 const env = process.env.ENVIRONMENT;
 const config = require("../config/config.json")[env];
 const pool = require("../config/database");
-const dbtable = config.table_prefix + "account";
+const dbtable = config.table_prefix + "payouts";
 const helpers = require("../utilities/helper/general_helper");
 
 var dbModel = {
-    add: async (data, table) => {
+    add: async (data) => {
         console.log("data => ", data);
         let qb = await pool.get_connection();
-        let response = await qb
-            .returning("id")
-            .insert(config.table_prefix + table, data);
+        let response = await qb.returning("id").insert(dbtable, data);
         qb.release();
         return response;
     },
-
     select: async () => {
         let qb = await pool.get_connection();
         let response = await qb.select("*").order_by("id", "desc").get(dbtable);
         qb.release();
         return response;
     },
-
     select_specific: async (condition, table) => {
         const dbtable = config.table_prefix + table;
         let qb = await pool.get_connection();
@@ -30,8 +26,7 @@ var dbModel = {
         qb.release();
         return response;
     },
-
-    select_list: async (condition, limit, table) => {
+    select_list: async (condition, limit) => {
         let qb = await pool.get_connection();
         let response;
         if (Object.keys(condition).length) {
@@ -54,7 +49,6 @@ var dbModel = {
         qb.release();
         return response;
     },
-
     updateDetails: async (condition, data) => {
         let qb = await pool.get_connection();
         let response = await qb.set(data).where(condition).update(dbtable);
@@ -69,8 +63,7 @@ var dbModel = {
         console.log(qb.last_query());
         return response;
     },
-    get_count: async (condition, table) => {
-        let dbtable = config.table_prefix + table;
+    get_count: async (condition) => {
         let qb = await pool.get_connection();
         let final_cond = " where ";
         if (Object.keys(condition).length) {

@@ -263,7 +263,7 @@ var EmployeeController = {
     update_details: async (req, res) => {
         try {
             let id = enc_dec.decrypt(req.bodyString("employee_id"));
-            let data = {};
+            let data = { updated_at: moment().format("YYYY-MM-DD HH:mm") };
 
             if (req.bodyString("profile_img")) {
                 data.profile_img = req.bodyString("profile_img");
@@ -361,7 +361,7 @@ var EmployeeController = {
 
     update_bank_details: async (req, res) => {
         try {
-            let data = {};
+            let data = { updated_at: moment().format("YYYY-MM-DD HH:mm") };
 
             if (req.bodyString("bank_name")) {
                 data.bank_name = req.bodyString("bank_name");
@@ -499,7 +499,7 @@ var EmployeeController = {
     update_kyc: async (req, res) => {
         try {
             let id = enc_dec.decrypt(req.bodyString("employee_id"));
-            let data = {};
+            let data = { updated_at: moment().format("YYYY-MM-DD HH:mm") };
 
             if (req.bodyString("id_type")) {
                 data.id_type = req.bodyString("id_type");
@@ -545,7 +545,7 @@ var EmployeeController = {
     update_academic_info: async (req, res) => {
         try {
             let id = enc_dec.decrypt(req.bodyString("employee_id"));
-            let data = {};
+            let data = { updated_at: moment().format("YYYY-MM-DD HH:mm") };
 
             if (req.bodyString("last_degree")) {
                 data.last_degree = req.bodyString("last_degree");
@@ -611,13 +611,16 @@ var EmployeeController = {
 
     delete: async (req, res) => {
         let employee_id = enc_dec.decrypt(req.bodyString("employee_id"));
-        let deleted = req.bodyString("deleted");
         try {
-            let user_data = {
-                deleted: deleted,
+            let data = {
+                deleted: 1,
                 updated_at: moment().format("YYYY-MM-DD HH:mm"),
             };
-            await EmployeeModel.updateDetails({ id: employee_id }, user_data);
+            await EmployeeModel.updateDetails({ id: employee_id }, data);
+            await EmployeeModel.updateAccountDetails(
+                { employee_id: employee_id },
+                data
+            );
             res.status(200).json({
                 status: true,
                 message: `Employee deleted successfully!`,
