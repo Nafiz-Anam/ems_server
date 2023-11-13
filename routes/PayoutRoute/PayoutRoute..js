@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const PayoutController = require("../../controller/PayoutController");
+const PayoutController = require("../../controller/payoutController");
 const checkAdminToken = require("../../middleware/tokenmanager/checkAdminToken");
 const checkPermission = require("../../middleware/tokenmanager/checkpermission");
 
