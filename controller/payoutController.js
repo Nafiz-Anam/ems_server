@@ -1,8 +1,7 @@
 require("dotenv").config();
 const PayoutModel = require("../model/payoutModel");
 const enc_dec = require("../utilities/decryptor/decryptor");
-let static_url = process.env.STATIC_FILE_URL;
-const moment = require("moment");
+const helpers = require("../utilities/helper/general_helper");
 
 var PayoutController = {
     add: async (req, res) => {
