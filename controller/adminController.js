@@ -4,6 +4,7 @@ const accessToken = require("../middleware/tokenmanager/token");
 const enc_dec = require("../utilities/decryptor/decryptor");
 const helpers = require("../utilities/helper/general_helper");
 const email_service = require("../utilities/mail/emailService");
+const SequenceUUID = require("sequential-uuid");
 
 var AdminController = {
     send_otp: async (req, res) => {
@@ -93,7 +94,7 @@ var AdminController = {
                 };
                 const token = accessToken(payload);
 
-                await helpers.delete_common_entry({ condition }, "otps");
+                await helpers.delete_common_entry( condition , "otps");
 
                 return res.status(200).json({
                     status: true,

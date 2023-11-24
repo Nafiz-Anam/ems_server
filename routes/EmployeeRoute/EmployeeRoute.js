@@ -6,8 +6,8 @@ const employeeUploader = require("../../middleware/uploads/employeeUploader");
 
 router.post(
     "/create",
-    employeeUploader,
     checkAdminToken,
+    employeeUploader,
     EmployeeController.create
 );
 router.post("/list", checkAdminToken, EmployeeController.list);

@@ -43,11 +43,11 @@ let emplyeeUploader = multer({
     fileFilter: fileFilter,
 }).fields([
     {
-        name: "id_card_front",
+        name: "id_img1",
         maxCount: 1,
     },
     {
-        name: "id_card_back",
+        name: "id_img2",
         maxCount: 1,
     },
     {

@@ -8,7 +8,7 @@ router.post("/add_password", checkAdminToken, AdminController.add_password);
 router.post("/login", AdminController.login);
 router.post("/check-admin", AdminController.check_admin);
 router.post(
-    "/verify-otp",
+    "/password_verify_otp",
     checkAdminToken,
     AdminController.password_otp_verify
 );

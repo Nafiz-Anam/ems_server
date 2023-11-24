@@ -123,6 +123,7 @@ var EmployeeController = {
                             employee_no: val?.employee_no
                                 ? val?.employee_no
                                 : "",
+                            id_img1: val?.id_img1 ? val?.id_img1 : "",
                             name: val?.name ? val?.name : "",
                             email: val?.email ? val?.email : "",
                             phone: val?.phone ? val?.phone : "",
@@ -168,7 +169,7 @@ var EmployeeController = {
             let account = await helpers.get_data_list(
                 "*",
                 "employee_accounts",
-                { user_id: id }
+                { employee_id: id }
             );
             EmployeeModel.select({ id: id })
                 .then(async (result) => {
@@ -461,7 +462,7 @@ var EmployeeController = {
 
                     for (let val of result) {
                         let employee_name = await helpers.get_data_list(
-                            "full_name",
+                            "name",
                             "employees",
                             { id: val?.employee_id }
                         );
@@ -473,7 +474,7 @@ var EmployeeController = {
                                 : "",
                             employee_name:
                                 employee_name.length > 0
-                                    ? employee_name[0]?.full_name
+                                    ? employee_name[0]?.name
                                     : "",
                             bank_name: val?.bank_name ? val?.bank_name : "",
                             account_holder: val?.account_holder
