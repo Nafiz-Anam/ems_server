@@ -27,6 +27,12 @@ var dbModel = {
         qb.release();
         return response;
     },
+    select2: async (condition) => {
+        let qb = await pool.get_connection();
+        let response = await qb.select("*").where(condition).get(dbtable2);
+        qb.release();
+        return response;
+    },
     select_list: async (condition, date_condition, limit, search, table) => {
         const dbtable = config.table_prefix + table;
         let qb = await pool.get_connection();

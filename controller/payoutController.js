@@ -55,12 +55,12 @@ var PayoutController = {
 
             const totalCount = await PayoutModel.get_count(condition);
 
-            await PayoutModel.select_list(condition, limit)
+            await PayoutModel.select_list(condition, limit, "payouts")
                 .then(async (result) => {
                     let response = [];
                     for (let val of result) {
                         let employee_name = await helpers.get_data_list(
-                            "full_name",
+                            "name",
                             "employees",
                             { id: val?.employee_id }
                         );
@@ -71,7 +71,7 @@ var PayoutController = {
                                 : "",
                             employee_name:
                                 employee_name.length > 0
-                                    ? employee_name[0]?.full_name
+                                    ? employee_name[0]?.name
                                     : "",
                             month: val?.month ? val?.month : "",
                             amount: val?.amount ? val?.amount : "",
@@ -82,7 +82,7 @@ var PayoutController = {
                     res.status(200).json({
                         status: true,
                         data: response,
-                        message: "Employee list fetched successfully!",
+                        message: "Payout list fetched successfully!",
                         total: totalCount,
                     });
                 })
@@ -107,7 +107,7 @@ var PayoutController = {
     details: async (req, res) => {
         try {
             let id = enc_dec.decrypt(req.bodyString("payout_id"));
-            EmployeeModel.select({ id: id })
+            await PayoutModel.select({ id: id })
                 .then(async (result) => {
                     let response = [];
                     for (let val of result) {

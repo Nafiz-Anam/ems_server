@@ -19,7 +19,7 @@ var dbModel = {
         qb.release();
         return response;
     },
-    select_list: async (condition, limit) => {
+    select_list: async (condition, limit, table) => {
         let qb = await pool.get_connection();
         let response;
         if (Object.keys(condition).length) {

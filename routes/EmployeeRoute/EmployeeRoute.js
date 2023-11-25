@@ -37,6 +37,11 @@ router.post(
     EmployeeController.add_bank_details
 );
 router.post(
+    "/banks-details",
+    checkAdminToken,
+    EmployeeController.bank_details
+);
+router.post(
     "/update/banks-details",
     checkAdminToken,
     EmployeeController.update_bank_details

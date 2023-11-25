@@ -123,7 +123,9 @@ var EmployeeController = {
                             employee_no: val?.employee_no
                                 ? val?.employee_no
                                 : "",
-                            id_img1: val?.id_img1 ? val?.id_img1 : "",
+                            profile_img: val?.profile_img
+                                ? val?.profile_img
+                                : "",
                             name: val?.name ? val?.name : "",
                             email: val?.email ? val?.email : "",
                             phone: val?.phone ? val?.phone : "",
@@ -417,6 +419,70 @@ var EmployeeController = {
         }
     },
 
+    bank_details: async (req, res) => {
+        try {
+            let id = enc_dec.decrypt(req.bodyString("account_id"));
+            await EmployeeModel.select2({ id })
+                .then(async (result) => {
+                    let response = [];
+
+                    for (let val of result) {
+                        let employee_name = await helpers.get_data_list(
+                            "name",
+                            "employees",
+                            { id: val?.employee_id }
+                        );
+
+                        let temp = {
+                            id: val?.id ? enc_dec.encrypt(val?.id) : "",
+                            employee_id: val?.employee_id
+                                ? enc_dec.encrypt(val?.employee_id)
+                                : "",
+                            employee_name:
+                                employee_name.length > 0
+                                    ? employee_name[0]?.name
+                                    : "",
+                            bank_name: val?.bank_name ? val?.bank_name : "",
+                            account_holder: val?.account_holder
+                                ? val?.account_holder
+                                : "",
+                            account_number: val?.account_number
+                                ? val?.account_number
+                                : "",
+                            bank_branch: val?.bank_branch
+                                ? val?.bank_branch
+                                : "",
+                            bank_swift_code: val?.bank_swift_code
+                                ? val?.bank_swift_code
+                                : "",
+                            created_at: val?.created_at ? val?.created_at : "",
+                            updated_at: val?.updated_at ? val?.updated_at : "",
+                        };
+                        response.push(temp);
+                    }
+                    res.status(200).json({
+                        status: true,
+                        data: response[0],
+                        message: "Account details fetched successfully!",
+                    });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.status(500).json({
+                        status: false,
+                        data: {},
+                        error: "Server side error!",
+                    });
+                });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                status: false,
+                data: {},
+                error: "Server side error!",
+            });
+        }
+    },
     account_list: async (req, res) => {
         try {
             let limit = {
