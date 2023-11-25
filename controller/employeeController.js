@@ -483,6 +483,7 @@ var EmployeeController = {
             });
         }
     },
+
     account_list: async (req, res) => {
         try {
             let limit = {
@@ -581,6 +582,65 @@ var EmployeeController = {
                 status: false,
                 data: {},
                 error: "Server side error!",
+            });
+        }
+    },
+
+    contact_info: async (req, res) => {
+        try {
+            let id = enc_dec.decrypt(req.bodyString("employee_id"));
+            let data = { updated_at: moment().format("YYYY-MM-DD HH:mm") };
+
+            if (req.bodyString("contact_person1_relation")) {
+                data.contact_person1_relation = req.bodyString(
+                    "contact_person1_relation"
+                );
+            }
+            if (req.bodyString("contact_person1_phone")) {
+                data.contact_person1_phone = req.bodyString(
+                    "contact_person1_phone"
+                );
+            }
+            if (req.bodyString("contact_person1_name")) {
+                data.contact_person1_name = req.bodyString(
+                    "contact_person1_name"
+                );
+            }
+            if (req.bodyString("contact_person2_relation")) {
+                data.contact_person2_relation = req.bodyString(
+                    "contact_person2_relation"
+                );
+            }
+            if (req.bodyString("contact_person2_phone")) {
+                data.contact_person2_phone = req.bodyString(
+                    "contact_person2_phone"
+                );
+            }
+            if (req.bodyString("contact_person2_name")) {
+                data.contact_person2_name = req.bodyString(
+                    "contact_person2_name"
+                );
+            }
+
+            await EmployeeModel.updateDetails({ id: id }, data)
+                .then((result) => {
+                    res.status(200).json({
+                        status: true,
+                        message: "Contact details updated successfully!",
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+                    res.status(500).json({
+                        status: false,
+                        message: "Internal server error!",
+                    });
+                });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                status: false,
+                message: "Internal server error!",
             });
         }
     },

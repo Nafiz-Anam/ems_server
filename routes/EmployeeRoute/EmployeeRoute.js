@@ -20,6 +20,12 @@ router.post(
     EmployeeController.update_details
 );
 router.post(
+    "/update/contact_info",
+    checkAdminToken,
+    employeeUploader,
+    EmployeeController.contact_info
+);
+router.post(
     "/update/kyc",
     checkAdminToken,
     employeeUploader,
