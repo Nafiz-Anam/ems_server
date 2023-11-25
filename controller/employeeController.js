@@ -199,26 +199,30 @@ var EmployeeController = {
                                 ? val?.last_degree
                                 : "",
                             gender: val?.gender ? val?.gender : "",
-                            contact_person1_name: val?.contact_person1_name
-                                ? val?.contact_person1_name
-                                : "",
-                            contact_person1_phone: val?.contact_person1_phone
-                                ? val?.contact_person1_phone
-                                : "",
-                            contact_person1_relation:
-                                val?.contact_person1_relation
-                                    ? val?.contact_person1_relation
+                            contact_details: {
+                                contact_person1_name: val?.contact_person1_name
+                                    ? val?.contact_person1_name
                                     : "",
-                            contact_person2_name: val?.contact_person2_name
-                                ? val?.contact_person2_name
-                                : "",
-                            contact_person2_phone: val?.contact_person2_phone
-                                ? val?.contact_person2_phone
-                                : "",
-                            contact_person2_relation:
-                                val?.contact_person2_relation
-                                    ? val?.contact_person2_relation
+                                contact_person1_phone:
+                                    val?.contact_person1_phone
+                                        ? val?.contact_person1_phone
+                                        : "",
+                                contact_person1_relation:
+                                    val?.contact_person1_relation
+                                        ? val?.contact_person1_relation
+                                        : "",
+                                contact_person2_name: val?.contact_person2_name
+                                    ? val?.contact_person2_name
                                     : "",
+                                contact_person2_phone:
+                                    val?.contact_person2_phone
+                                        ? val?.contact_person2_phone
+                                        : "",
+                                contact_person2_relation:
+                                    val?.contact_person2_relation
+                                        ? val?.contact_person2_relation
+                                        : "",
+                            },
                             role: val?.role ? val?.role : "",
                             salary: val?.salary ? val?.salary : "",
                             status: val?.status === 0 ? "active" : "inactive",
