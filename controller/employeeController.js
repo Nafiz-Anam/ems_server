@@ -182,9 +182,14 @@ var EmployeeController = {
                             profile_img: val?.profile_img
                                 ? val?.profile_img
                                 : "",
-                            id_img1: val?.id_img1 ? val?.id_img1 : "",
-                            id_img2: val?.id_img2 ? val?.id_img2 : "",
-                            degree_img: val?.degree_img ? val?.degree_img : "",
+                            academic_details: {
+                                degree_img: val?.degree_img
+                                    ? val?.degree_img
+                                    : "",
+                                last_degree: val?.last_degree
+                                    ? val?.last_degree
+                                    : "",
+                            },
                             name: val?.name ? val?.name : "",
                             email: val?.email ? val?.email : "",
                             phone: val?.phone ? val?.phone : "",
@@ -194,10 +199,11 @@ var EmployeeController = {
                             state: val?.state ? val?.state : "",
                             zip_code: val?.zip_code ? val?.zip_code : "",
                             country: val?.country ? val?.country : "",
-                            id_type: val?.id_type ? val?.id_type : "",
-                            last_degree: val?.last_degree
-                                ? val?.last_degree
-                                : "",
+                            kyc_details: {
+                                id_type: val?.id_type ? val?.id_type : "",
+                                id_img1: val?.id_img1 ? val?.id_img1 : "",
+                                id_img2: val?.id_img2 ? val?.id_img2 : "",
+                            },
                             gender: val?.gender ? val?.gender : "",
                             contact_details: {
                                 contact_person1_name: val?.contact_person1_name
@@ -283,12 +289,6 @@ var EmployeeController = {
             let id = enc_dec.decrypt(req.bodyString("employee_id"));
             let data = { updated_at: moment().format("YYYY-MM-DD HH:mm") };
 
-            if (req.bodyString("profile_img")) {
-                data.profile_img = req.bodyString("profile_img");
-            } else if (req.all_files?.profile_img) {
-                data.profile_img =
-                    static_url + "employee/" + req.all_files?.profile_img;
-            }
             if (req.bodyString("name")) {
                 data.name = req.bodyString("name");
             }
@@ -319,8 +319,14 @@ var EmployeeController = {
             if (req.bodyString("country")) {
                 data.country = req.bodyString("country");
             }
+            if (req.bodyString("salary")) {
+                data.salary = req.bodyString("salary");
+            }
+            if (req.bodyString("role")) {
+                data.role = req.bodyString("role");
+            }
 
-            await EmployeeModel.updateDetails({ id: id }, agent_data)
+            await EmployeeModel.updateDetails({ id: id }, data)
                 .then((result) => {
                     res.status(200).json({
                         status: true,

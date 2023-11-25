@@ -16,7 +16,6 @@ router.post("/details", checkPermission, EmployeeController.details);
 router.post(
     "/update",
     checkAdminToken,
-    employeeUploader,
     EmployeeController.update_details
 );
 router.post(
