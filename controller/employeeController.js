@@ -69,13 +69,7 @@ var EmployeeController = {
 
     dropdown: async (req, res) => {
         try {
-            await EmployeeModel.select_list(
-                {},
-                {},
-                {},
-                {},
-                "employees"
-            )
+            await EmployeeModel.select_list({}, {}, {}, {}, "employees")
                 .then(async (result) => {
                     let response = [];
                     for (let val of result) {
@@ -211,11 +205,19 @@ var EmployeeController = {
     details: async (req, res) => {
         try {
             let id = enc_dec.decrypt(req.bodyString("employee_id"));
+            const currentMonth = moment().format("MM-YYYY");
+            let current_month_payment = await helpers.get_data_list(
+                "amount",
+                "payouts",
+                { employee_id: id, month: currentMonth }
+            );
+            let total_amount_earned = await helpers.total_amount(id);
             let account = await helpers.get_data_list(
                 "*",
                 "employee_accounts",
                 { employee_id: id }
             );
+            let months_since_added = await helpers.months_since_added(id);
             EmployeeModel.select({ id: id })
                 .then(async (result) => {
                     let response = [];
@@ -274,6 +276,18 @@ var EmployeeController = {
                             },
                             role: val?.role ? val?.role : "",
                             salary: val?.salary ? val?.salary : "",
+                            total_amount_earned:
+                                total_amount_earned.length > 0
+                                    ? total_amount_earned[0].total_amount
+                                    : 0,
+                            current_month_payment:
+                                current_month_payment.length > 0
+                                    ? current_month_payment[0]?.amount
+                                    : 0,
+                            working_months:
+                                months_since_added.length > 0
+                                    ? months_since_added[0].months_since_added
+                                    : 0,
                             status: val?.status === 0 ? "active" : "inactive",
                             created_at: val?.created_at ? val?.created_at : "",
                             updated_at: val?.updated_at ? val?.updated_at : "",

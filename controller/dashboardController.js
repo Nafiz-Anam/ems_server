@@ -36,20 +36,23 @@ var DashboardController = {
                         WHERE YEAR(month) = YEAR(CURDATE());`;
             const currentYearPayoutAmount = await qb.query(query);
 
-            query = `SELECT
-                        DATE_FORMAT(p.date, '%m-%Y') AS month,
-                        IFNULL(SUM(e.amount), 0) AS totalAmount
-                    FROM
-                        (SELECT DATE_SUB(CURDATE(), INTERVAL n MONTH) AS date
-                        FROM (
-                            SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5
-                        ) AS nums) p
-                    LEFT JOIN
-                        ems_payouts e ON DATE_FORMAT(e.month, '%Y-%m') = DATE_FORMAT(p.date, '%Y-%m')
-                    GROUP BY
-                        DATE_FORMAT(p.date, '%Y-%m')
-                    ORDER BY
-                        p.date DESC;`;
+            query = `SELECT 
+                        DATE_FORMAT(p.date, '%m-%Y') AS MONTH, 
+                        IFNULL(SUM(e.amount), 0) AS totalAmount 
+                    FROM 
+                        (SELECT DATE_SUB(CURDATE(), INTERVAL n MONTH) AS date 
+                        FROM 
+                            (SELECT 0 AS n 
+                            UNION ALL SELECT 1 
+                            UNION ALL SELECT 2 
+                            UNION ALL SELECT 3 
+                            UNION ALL SELECT 4 
+                            UNION ALL SELECT 5) nums) p 
+                    LEFT JOIN ems_payouts e 
+                        ON e.month = DATE_FORMAT(p.date, '%m-%Y') 
+                    GROUP BY DATE_FORMAT(p.date, '%m-%Y') 
+                    ORDER BY p.date DESC;
+                    `;
             const graphChartValues = await qb.query(query);
             qb.release();
 

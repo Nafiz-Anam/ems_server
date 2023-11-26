@@ -158,6 +158,25 @@ var helpers = {
         qb.release();
         return response;
     },
+    total_amount: async (employee_id) => {
+        let qb = await pool.get_connection();
+        let query = `SELECT SUM(amount) AS total_amount
+                    FROM ems_payouts
+                    WHERE employee_id = '${employee_id}';`;
+        let response = await qb.query(query);
+        qb.release();
+        return response;
+    },
+    months_since_added: async (employee_id) => {
+        let qb = await pool.get_connection();
+        let query = `SELECT TIMESTAMPDIFF(MONTH, created_at, CURDATE()) AS months_since_added
+                    FROM ems_employees
+                    WHERE id = '${employee_id}';
+                    `;
+        let response = await qb.query(query);
+        qb.release();
+        return response;
+    },
     common_update: async (condition, data, table) => {
         let qb = await pool.get_connection();
         let response = await qb
