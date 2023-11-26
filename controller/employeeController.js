@@ -67,6 +67,49 @@ var EmployeeController = {
         }
     },
 
+    dropdown: async (req, res) => {
+        try {
+            await EmployeeModel.select_list(
+                {},
+                {},
+                {},
+                {},
+                "employees"
+            )
+                .then(async (result) => {
+                    let response = [];
+                    for (let val of result) {
+                        let temp = {
+                            id: val?.id ? enc_dec.encrypt(val?.id) : "",
+                            name: val?.name ? val?.name : "",
+                            email: val?.email ? val?.email : "",
+                        };
+                        response.push(temp);
+                    }
+                    res.status(200).json({
+                        status: true,
+                        data: response,
+                        message: "Employee list fetched successfully!",
+                    });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.status(500).json({
+                        status: false,
+                        data: {},
+                        error: "Server side error!",
+                    });
+                });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                status: false,
+                data: {},
+                error: "Server side error!",
+            });
+        }
+    },
+
     list: async (req, res) => {
         try {
             let limit = {

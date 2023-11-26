@@ -11,6 +11,7 @@ router.post(
     EmployeeController.create
 );
 router.post("/list", checkAdminToken, EmployeeController.list);
+router.post("/list/dropdown", checkAdminToken, EmployeeController.dropdown);
 router.post("/account_list", checkAdminToken, EmployeeController.account_list);
 router.post("/details", checkPermission, EmployeeController.details);
 router.post(
