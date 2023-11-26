@@ -51,7 +51,7 @@ var DashboardController = {
                     LEFT JOIN ems_payouts e 
                         ON e.month = DATE_FORMAT(p.date, '%m-%Y') 
                     GROUP BY DATE_FORMAT(p.date, '%m-%Y') 
-                    ORDER BY p.date DESC;
+                    ORDER BY p.date ASC;
                     `;
             const graphChartValues = await qb.query(query);
             qb.release();
