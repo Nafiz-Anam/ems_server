@@ -2,6 +2,11 @@ require("dotenv").config();
 const helpers = require("../utilities/helper/general_helper");
 const moment = require("moment");
 const pool = require("../config/database");
+const pdf = require("pdf-creator-node");
+const fs = require("fs");
+const path = require("path");
+const enc_dec = require("../utilities/decryptor/decryptor");
+
 
 var DashboardController = {
     analytics: async (req, res) => {
@@ -77,6 +82,58 @@ var DashboardController = {
                 status: false,
                 message: "Internal server error!",
             });
+        }
+    },
+
+    report: async (req, res) => {
+        try {
+            const employeeId = enc_dec.decrypt(req.bodyString("employee_id"));
+
+            const employeeData = await helpers.get_data_list("*", "employees", {
+                id: employeeId,
+            });
+
+            // Read the HTML template
+            const templateHtml = fs.readFileSync(
+                path.join(
+                    __dirname,
+                    "../templates/employeeReportTemplate.html"
+                ),
+                "utf8"
+            );
+
+            // Replace placeholders in the template with actual data
+            const renderedHtml = templateHtml.replace(
+                "{{employee.name}}",
+                employeeData[0].name
+            );
+
+            // Create a PDF document
+            const document = {
+                html: renderedHtml,
+                data: {
+                    employee: employeeData[0],
+                },
+                path: "./output.pdf",
+            };
+            const options = {
+                format: "A4",
+                orientation: "portrait",
+                border: "10mm",
+                // You can add other options here
+            };
+
+            pdf.create(document, options)
+                .then((pdfResponse) => {
+                    res.sendFile(path.resolve("./output.pdf"));
+                })
+                .catch((error) => {
+                    console.error(error);
+                    res.status(500).send("Error generating report");
+                });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send("Server error");
         }
     },
 };
