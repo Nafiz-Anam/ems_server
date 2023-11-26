@@ -124,6 +124,9 @@ var EmployeeController = {
             if (req.bodyString("state")) {
                 condition.state = req.bodyString("state");
             }
+            if (req.bodyString("deleted")) {
+                condition.deleted = req.bodyString("deleted");
+            }
             if (req.bodyString("gender")) {
                 condition.gender = req.bodyString("gender");
             }
