@@ -1,16 +1,163 @@
-<!-- templates/employeeReportTemplate.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <title>Employee Report</title>
-  <!-- Your styles and other head elements here -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payslip for October 2023</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      padding: 20px;
+      margin: auto;
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .payslip-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .address {
+      margin-bottom: 20px;
+    }
+
+    .employee-details,
+    .salary-details {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #000;
+      margin-bottom: 20px;
+    }
+
+    .employee-details th,
+    .employee-details td,
+    .salary-details th,
+    .salary-details td {
+      border: 1px solid #000;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .earnings,
+    .deductions {
+      width: 50%;
+      display: inline-table;
+    }
+
+    .earnings th,
+    .earnings td,
+    .deductions th,
+    .deductions td {
+      padding: 8px;
+      text-align: left;
+    }
+
+    .total,
+    .net-pay {
+      font-weight: bold;
+    }
+
+    .amount-in-words {
+      margin-top: 20px;
+    }
+
+    .note {
+      text-align: center;
+      font-size: 12px;
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Your template content here -->
-  <h1>Employee Report for {{employee.name}}</h1>
-  <!-- Other placeholders for employee data -->
+  <div class="container">
+    <div class="header-section">
+      <div class="payslip-title">PAYSLIP FOR MONTH OF {{employee.month}}</div>
+      <div class="address">
+        EMS Application<br>
+        Company address comes here, 4300068
+      </div>
+    </div>
+
+    <table class="employee-details">
+      <tr>
+        <td>Name: {{employee.name}}</td>
+        <td>Employee Code: {{employee.employee_no}}</td>
+      </tr>
+      <tr>
+        <td>Date Of Joining: {{employee.created_at}}</td>
+        <td>Designation: {{employee.role}}</td>
+      </tr>
+      <tr>
+        <td>Bank Name: {{account_details.bank_name}}</td>
+        <td>Account Holder: {{account_details.account_holder}}</td>
+      </tr>
+      <tr>
+        <td>Bank Account: {{account_details.account_number}}</td>
+        <td>Bank Branch: {{account_details.bank_branch}}</td>
+      </tr>
+    </table>
+
+    <div class="earnings">
+      <table class="employee-details">
+        <tr>
+          <th>EARNINGS</th>
+          <th>AMOUNT</th>
+        </tr>
+        <tr>
+          <td>Basic</td>
+          <td>${{employee.salary}}</td>
+        </tr>
+        <tr>
+          <td>House Rent Allowance</td>
+          <td>$4,800</td>
+        </tr>
+        <!-- Add other earnings here -->
+        <tr class="total">
+          <td>Total Earnings - A</td>
+          <td>${{employee.salary_rent}}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="deductions">
+      <table class="employee-details">
+        <tr>
+          <th>DEDUCTIONS</th>
+          <th>AMOUNT</th>
+        </tr>
+        <tr>
+          <td>Professional Tax</td>
+          <td>$200</td>
+        </tr>
+        <!-- Add other deductions here -->
+        <tr class="total">
+          <td>Total Deduction-B</td>
+          <td>$200</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="net-pay">
+      Net Pay (A - B) ${{employee.net_salary}}
+    </div>
+
+    <!-- Add Days Summary and Punctuality sections here -->
+
+    <div class="note">
+      <p>*Note: This is a system generated payslip hence signature is not required.</p>
+    </div>
+  </div>
 </body>
 
 </html>

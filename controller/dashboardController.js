@@ -6,7 +6,7 @@ const pdf = require("pdf-creator-node");
 const fs = require("fs");
 const path = require("path");
 const enc_dec = require("../utilities/decryptor/decryptor");
-
+const EmployeeController = require("./employeeController");
 
 var DashboardController = {
     analytics: async (req, res) => {
@@ -92,6 +92,20 @@ var DashboardController = {
             const employeeData = await helpers.get_data_list("*", "employees", {
                 id: employeeId,
             });
+            let account = await helpers.get_data_list(
+                "*",
+                "employee_accounts",
+                { employee_id: employeeId }
+            );
+
+            if (employeeData.length === 0) {
+                throw new Error("Employee not found");
+            }
+
+            const employee = employeeData[0];
+            employee.account_details = account[0];
+            employee.salary_rent = parseFloat(employee?.salary) + 4800;
+            employee.net_salary = parseFloat(employee?.salary) + 4800 - 200;
 
             // Read the HTML template
             const templateHtml = fs.readFileSync(
@@ -103,10 +117,21 @@ var DashboardController = {
             );
 
             // Replace placeholders in the template with actual data
-            const renderedHtml = templateHtml.replace(
-                "{{employee.name}}",
-                employeeData[0].name
-            );
+            let renderedHtml = templateHtml;
+            Object.keys(employee).forEach((key) => {
+                const regex = new RegExp(`{{employee.${key}}}`, "g");
+                renderedHtml = renderedHtml.replace(regex, employee[key]);
+            });
+
+            console.log(employee);
+
+            Object.keys(employee?.account_details).forEach((key) => {
+                const placeholder = `{{account_details.${key}}}`;
+                renderedHtml = renderedHtml.replace(
+                    new RegExp(placeholder, "g"),
+                    employee.account_details[key]
+                );
+            });
 
             // Create a PDF document
             const document = {

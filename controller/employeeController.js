@@ -227,6 +227,9 @@ var EmployeeController = {
                     for (let val of result) {
                         let temp = {
                             id: val?.id ? enc_dec.encrypt(val?.id) : "",
+                            employee_no: val?.employee_no
+                                ? val?.employee_no
+                                : "",
                             profile_img: val?.profile_img
                                 ? val?.profile_img
                                 : "",
