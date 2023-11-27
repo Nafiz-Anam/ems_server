@@ -6,7 +6,6 @@ const pdf = require("pdf-creator-node");
 const fs = require("fs");
 const path = require("path");
 const enc_dec = require("../utilities/decryptor/decryptor");
-const EmployeeController = require("./employeeController");
 
 var DashboardController = {
     analytics: async (req, res) => {
