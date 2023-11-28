@@ -72,8 +72,9 @@ var AdminController = {
             };
 
             const result = await AdminModel.select_otp(condition);
+            console.log(result);
 
-            if (!result) {
+            if (!result.length) {
                 return res.status(401).json({
                     status: false,
                     message: "Wrong OTP, Try again!",
